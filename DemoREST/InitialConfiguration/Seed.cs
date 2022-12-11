@@ -8,11 +8,14 @@ namespace DemoREST.InitialConfiguration
 {
     public static class Seed
     {
-        public static async Task AddRoles(IServiceScope scope)
+        internal static async Task RunMigration(IServiceScope scope)
         {
             var _dataContext = new DataContext(scope.ServiceProvider.GetRequiredService<DbContextOptions<DataContext>>());
             await _dataContext.Database.MigrateAsync();
+        }
 
+        internal static async Task AddRoles(IServiceScope scope)
+        {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             if (!await roleManager.RoleExistsAsync("Admin"))
