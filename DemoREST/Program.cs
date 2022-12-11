@@ -16,6 +16,7 @@ var app = builder.Build();
 //Migration on startup
 using (var scope = app.Services.CreateScope())
 {
+    await Seed.RunMigration(scope);
     await Seed.AddRoles(scope);
 }
 

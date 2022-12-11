@@ -21,13 +21,13 @@
             public const string Refresh = Base + "/indentity/refresh";
         }
 
-        public static class Media
+        public static class Tag
         {
-            public const string Get = Base + "/media/{mediaId}";
-            public const string GetAll = Base + "/media";
-            public const string Create = Base + "/media";
-            public const string Update = Base + "/media/{mediaId}";
-            public const string Delete = Base + "/media/{mediaId}";
+            public const string Get = Base + "/tags/{tagName}";
+            public const string GetAll = Base + "/tags";
+            public const string Create = Base + "/tags";
+            public const string Update = Base + "/tags/{tagName}";
+            public const string Delete = Base + "/tags/{tagName}";
         }
     }
 

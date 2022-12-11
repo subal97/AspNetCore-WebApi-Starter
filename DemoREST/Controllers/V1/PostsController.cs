@@ -25,14 +25,12 @@ namespace DemoREST.Controllers.V1
         {
             var posts = await _postService.GetPostsAsync();
 
-            var mediaCollection = await _postService.GetAllMediaAsync();
-
             var response = from post in posts
                            select new PostResponse
                            {
-                               Id = post.Id,
+                               Id = post.PostId,
                                Name = post.Name,
-                               Media = mediaCollection.Where(x => x.PostId == post.Id.ToString()).ToList(),
+                               Tags = post.Tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList(),
                            };
 
             return Ok(response);
@@ -46,7 +44,12 @@ namespace DemoREST.Controllers.V1
             {
                 return NotFound();
             }
-            return Ok(new PostResponse { Id = post.Id, Name = post.Name, Media = await _postService.GetMediaForPostAsync(post.Id)});
+            return Ok(new PostResponse 
+            { 
+                Id = post.PostId, 
+                Name = post.Name,
+                Tags = post.Tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList(),
+            });
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -56,26 +59,27 @@ namespace DemoREST.Controllers.V1
                 Name = postRequest.Name,
                 UserId = HttpContext.GetUserId(),
             };
-            post.Id = Guid.NewGuid();
+            post.PostId = Guid.NewGuid();
             
             await _postService.CreatePostAsync(post);
 
-            List<Media> mediaCollection = Array.Empty<Media>().ToList();
-            if (postRequest.Media != null)
+            List<Tag> tags = Array.Empty<Tag>().ToList();
+            if (postRequest.Tags != null)
             {
-                mediaCollection = (from media in postRequest.Media
-                                       select new Media
-                                       {
-                                           PostId = post.Id.ToString(),
-                                           Content = media.Content
-                                       }).ToList();
-                await _postService.CreateMediaAsync(mediaCollection);
+                tags = postRequest.Tags.Select(x => new Tag { TagName = x.TagName }).ToList();
+                await _postService.UpdateTagsForPostAsync(post.PostId, tags);
+                tags = await _postService.GetTagsForPostAsync(post.PostId);
             }
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var location = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
+            var location = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.PostId.ToString());
 
-            var response = new PostResponse { Id = post.Id, Name = post.Name, Media = mediaCollection};
+            var response = new PostResponse
+            {
+                Id = post.PostId,
+                Name = post.Name,
+                Tags = tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList()
+            };
 
             return Created(location, response);
         }
@@ -91,17 +95,29 @@ namespace DemoREST.Controllers.V1
                     Error = "You do not own this post"
                 });
             }
+            
             var post = await _postService.GetPostByIdAsync(postId);
             post.Name = request.Name;
-            
             var updated = await _postService.UpdatePostAsync(post);
             if (!updated)
             {
                 return NotFound();
             }
-            var mediaCollection = Array.Empty<Media>().ToList();
-            mediaCollection = await _postService.GetMediaForPostAsync(post.Id);
-            return updated == true ? Ok(new PostResponse { Id = post.Id, Name = post.Name, Media = mediaCollection }) : NotFound();
+
+            var tags = new List<Tag>();
+            if (request.Tags != null)
+            {
+                var tagsToUpdate = request.Tags.Select(x => new Tag { TagName = x.TagName }).ToList();
+                await _postService.UpdateTagsForPostAsync(post.PostId, tagsToUpdate);
+                tags = await _postService.GetTagsForPostAsync(post.PostId);
+            }
+
+            return Ok(new PostResponse
+            {
+                Id = post.PostId,
+                Name = post.Name,
+                Tags = tags.Select(x => new TagResponse { TagName = x.TagName }),
+            });
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]

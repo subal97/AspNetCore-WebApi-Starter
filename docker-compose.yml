@@ -17,6 +17,8 @@ services:
  db-server:
   image: mcr.microsoft.com/mssql/server:2022-latest
   container_name: db-server
+  volumes:
+   - db-vol:/var/opt/mssql
   environment:
    - ACCEPT_EULA=Y
    - MSSQL_SA_PASSWORD=Subal@1234
@@ -26,4 +28,6 @@ services:
   networks:
    - localdev
 
-#remove media and add tag
+volumes:
+ db-vol:
+  external: true

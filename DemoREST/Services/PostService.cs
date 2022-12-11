@@ -1,4 +1,5 @@
-﻿using DemoREST.Data;
+﻿using DemoREST.Contracts.V1.Requests;
+using DemoREST.Data;
 using DemoREST.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,12 +16,12 @@ namespace DemoREST.Services
 
         public Task<Post> GetPostByIdAsync(Guid postId)
         {
-            return _dataContext.Posts.FirstOrDefaultAsync(post => post.Id == postId);
+            return _dataContext.Posts.AsNoTracking().Include(p=>p.Tags).SingleOrDefaultAsync(post => post.PostId == postId);
         }
 
         public Task<List<Post>> GetPostsAsync()
         {
-            return _dataContext.Posts.ToListAsync();
+            return _dataContext.Posts.Include(p=>p.Tags).ToListAsync();
         }
 
         public async Task<bool> CreatePostAsync(Post post)
@@ -32,8 +33,9 @@ namespace DemoREST.Services
 
         public async Task<bool> UpdatePostAsync(Post postToUpdate)
         {
-            if (!PostExists(postToUpdate.Id)) return false;
+            if (!PostExists(postToUpdate.PostId)) return false;
             _dataContext.Entry(postToUpdate).State = EntityState.Modified;
+            //_dataContext.Posts.Update(postToUpdate);
             var updated = await _dataContext.SaveChangesAsync();
             return updated > 0;
         }
@@ -43,13 +45,14 @@ namespace DemoREST.Services
             var post = await GetPostByIdAsync(postId);
             if (post == null) return false;
             _dataContext.Posts.Remove(post);
+            _dataContext.PostTag.RemoveRange(post.Tags);
             var deleted = await _dataContext.SaveChangesAsync();
             return deleted > 0;
         }
         
         public async Task<bool> UserOwnsPostAsync(Guid postId, string userId)
         {
-            var post = await _dataContext.Posts.AsNoTracking().SingleAsync(x => x.Id == postId);
+            var post = await _dataContext.Posts.AsNoTracking().SingleAsync(x => x.PostId == postId);
             if(post == null)
             {
                 return false;
@@ -58,38 +61,67 @@ namespace DemoREST.Services
             return post.UserId == userId;
         }
 
-        public Task<List<Media>> GetMediaForPostAsync(Guid postId)
+        public Task<List<Tag>> GetTagsForPostAsync(Guid postId)
         {
-            return _dataContext.Media.Where(media => media.PostId == postId.ToString()).ToListAsync();
+            return _dataContext.PostTag.AsNoTracking().Where(p => p.PostId == postId).Select(p => new Tag { TagName = p.TagName}).ToListAsync();
         }
 
-        public async Task<bool> CreateMediaAsync(List<Media> media)
+        public async Task<bool> CreateTagAsync(Tag tag)
         {
-            await _dataContext.Media.AddRangeAsync(media);
+            await _dataContext.Tag.AddRangeAsync(tag);
             var created = await _dataContext.SaveChangesAsync();
             return created > 0;
         }
 
-        public Task<List<Media>> GetAllMediaAsync()
+        public Task<List<Tag>> GetAllTagsAsync()
         {
-            return _dataContext.Media.ToListAsync();
+            return _dataContext.Tag.AsNoTracking().ToListAsync();
         }
 
-        public async Task<bool> DeleteMediaAsync(int mediaId)
+        public Task<Tag> GetTagByName(string tagName)
         {
-            var media = await _dataContext.Media.SingleOrDefaultAsync(x => x.Id == mediaId);
-            if(media == null)
+            return _dataContext.Tag.AsNoTracking().SingleOrDefaultAsync(tag => tag.TagName == tagName);
+        }
+
+        public async Task<bool> DeleteTagAsync(string tagName)
+        {
+            var tag = await _dataContext.Tag.SingleOrDefaultAsync(x => x.TagName == tagName);
+            if (tag == null)
             {
                 return false;
             }
-            _dataContext.Media.Remove(media);
+            _dataContext.Tag.Remove(tag);
             var deleted = await _dataContext.SaveChangesAsync();
             return deleted > 0;
         }
 
+        public async Task<bool> UpdateTagsForPostAsync(Guid postId, IEnumerable<Tag> tags)
+        {
+            var validTags = await _dataContext.Tag.AsNoTracking().ToListAsync();
+
+            //keep the tags which are valid tags
+            tags = tags.DistinctBy(x=>x.TagName);
+            tags = (from tag in tags join validTag in validTags on tag.TagName equals validTag.TagName select tag).ToList();
+
+            var existingTags = await _dataContext.PostTag.AsNoTracking().Where(p => p.PostId == postId).Select(x=> new Tag { TagName = x.TagName}).ToListAsync();
+            
+            var tagsToAdd = tags.ExceptBy(existingTags.Select(x => x.TagName), x => x.TagName)
+                                .Select(x => new PostTag { TagName = x.TagName, PostId = postId }).ToList();
+            
+            _dataContext.PostTag.AddRange(tagsToAdd);
+            await _dataContext.SaveChangesAsync();
+
+            var tagsToRemove = existingTags.ExceptBy(tags.Select(x => x.TagName), x => x.TagName)
+                                .Select(x => new PostTag { TagName = x.TagName, PostId = postId }).ToList();
+            
+            _dataContext.PostTag.RemoveRange(tagsToRemove);
+            await _dataContext.SaveChangesAsync();
+            return true;
+        }
+
         private bool PostExists(Guid id)
         {
-            return _dataContext.Posts.Any(post => post.Id == id);
+            return _dataContext.Posts.Any(post => post.PostId == id);
         }
 
     }

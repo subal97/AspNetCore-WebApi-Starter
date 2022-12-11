@@ -22,30 +22,9 @@ namespace DemoREST.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("DemoREST.Domain.Media", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Media");
-                });
-
             modelBuilder.Entity("DemoREST.Domain.Post", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("PostId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -57,11 +36,26 @@ namespace DemoREST.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("PostId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("DemoREST.Domain.PostTag", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TagName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PostId", "TagName");
+
+                    b.HasIndex("TagName");
+
+                    b.ToTable("PostTag");
                 });
 
             modelBuilder.Entity("DemoREST.Domain.RefreshToken", b =>
@@ -94,6 +88,16 @@ namespace DemoREST.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("DemoREST.Domain.Tag", b =>
+                {
+                    b.Property<string>("TagName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TagName");
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -309,6 +313,25 @@ namespace DemoREST.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DemoREST.Domain.PostTag", b =>
+                {
+                    b.HasOne("DemoREST.Domain.Post", "Post")
+                        .WithMany("Tags")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DemoREST.Domain.Tag", "Tag")
+                        .WithMany("Posts")
+                        .HasForeignKey("TagName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("DemoREST.Domain.RefreshToken", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
@@ -369,6 +392,16 @@ namespace DemoREST.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DemoREST.Domain.Post", b =>
+                {
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("DemoREST.Domain.Tag", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }
