@@ -3,5 +3,6 @@
     public class UpdatePostRequest
     {
         public string Name { get; set; }
+        public IEnumerable<TagRequest> Tags { get; set; }
     }
 }

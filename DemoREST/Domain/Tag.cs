@@ -3,14 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DemoREST.Domain
 {
-    public class Media
+    public class Tag
     {
         [Key]
-        public int Id { get; set; }
+        public string TagName { get; set; }
 
-        public string Content { get; set; }
-
-        public string PostId { get; set; }
-
+        public virtual IList<PostTag> Posts{ get; set; }
     }
 }

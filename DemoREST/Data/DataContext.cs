@@ -11,8 +11,15 @@ namespace DemoREST.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<PostTag>().HasKey(table => new { table.PostId, table.TagName });
+        }
+
         public DbSet<Post> Posts { get; set; }
         public DbSet<RefreshToken> RefreshTokens{ get; set; }
-        public DbSet<Media> Media { get; set; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<PostTag> PostTag { get; set; }
     }
 }
