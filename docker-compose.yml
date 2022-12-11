@@ -1,0 +1,29 @@
+networks:
+ localdev:
+  name: localdev
+
+services:
+ main-api:
+  build: demorest
+  container_name: web-api
+  restart: always
+  ports:
+   - "7000:80"
+  depends_on:
+   - db-server
+  networks:
+   - localdev
+
+ db-server:
+  image: mcr.microsoft.com/mssql/server:2022-latest
+  container_name: db-server
+  environment:
+   - ACCEPT_EULA=Y
+   - MSSQL_SA_PASSWORD=Subal@1234
+   - MSSQL_TCP_PORT=1433
+  ports:
+   - "1450:1433"
+  networks:
+   - localdev
+
+#remove media and add tag
