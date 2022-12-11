@@ -13,6 +13,7 @@ namespace DemoREST.Services
         Task<bool> UserOwnsPostAsync(Guid postId, string userId);
         Task<bool> UpdateTagsForPostAsync(Guid postId, IEnumerable<Tag> tags);
         Task<List<Tag>> GetTagsForPostAsync(Guid postId);
+        Task<List<PostTag>> GetPostTagsForPostAsync(Guid postId);
         Task<List<Tag>> GetAllTagsAsync();
         Task<bool> CreateTagAsync(Tag tag);
         Task<bool> DeleteTagAsync(string tagName);

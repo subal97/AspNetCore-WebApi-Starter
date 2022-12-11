@@ -13,13 +13,15 @@ namespace DemoREST.Installers
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlServer(connectionString);
-                options.EnableSensitiveDataLogging();
+                //options.EnableSensitiveDataLogging();
             });
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.AddAutoMapper(typeof(Program));
 
             services.AddScoped<IPostService, PostService>();
         }

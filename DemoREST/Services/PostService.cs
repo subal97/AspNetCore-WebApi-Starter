@@ -66,6 +66,11 @@ namespace DemoREST.Services
             return _dataContext.PostTag.AsNoTracking().Where(p => p.PostId == postId).Select(p => new Tag { TagName = p.TagName}).ToListAsync();
         }
 
+        public Task<List<PostTag>> GetPostTagsForPostAsync(Guid postId)
+        {
+            return _dataContext.PostTag.Where(x => x.PostId == postId).ToListAsync();
+        }
+
         public async Task<bool> CreateTagAsync(Tag tag)
         {
             await _dataContext.Tag.AddRangeAsync(tag);

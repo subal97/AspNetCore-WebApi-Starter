@@ -1,4 +1,5 @@
-﻿using DemoREST.Contracts.V1;
+﻿using AutoMapper;
+using DemoREST.Contracts.V1;
 using DemoREST.Contracts.V1.Requests;
 using DemoREST.Contracts.V1.Responses;
 using DemoREST.Domain;
@@ -14,26 +15,19 @@ namespace DemoREST.Controllers.V1
     public class PostsController : Controller
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
 
-        public PostsController(IPostService postService)
+        public PostsController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
-
-            var response = from post in posts
-                           select new PostResponse
-                           {
-                               Id = post.PostId,
-                               Name = post.Name,
-                               Tags = post.Tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList(),
-                           };
-
-            return Ok(response);
+            return Ok(_mapper.Map<List<PostResponse>>(posts));
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
@@ -44,12 +38,7 @@ namespace DemoREST.Controllers.V1
             {
                 return NotFound();
             }
-            return Ok(new PostResponse 
-            { 
-                Id = post.PostId, 
-                Name = post.Name,
-                Tags = post.Tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList(),
-            });
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -68,18 +57,13 @@ namespace DemoREST.Controllers.V1
             {
                 tags = postRequest.Tags.Select(x => new Tag { TagName = x.TagName }).ToList();
                 await _postService.UpdateTagsForPostAsync(post.PostId, tags);
-                tags = await _postService.GetTagsForPostAsync(post.PostId);
+                post.Tags = await _postService.GetPostTagsForPostAsync(post.PostId);
             }
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var location = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.PostId.ToString());
 
-            var response = new PostResponse
-            {
-                Id = post.PostId,
-                Name = post.Name,
-                Tags = tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList()
-            };
+            var response = _mapper.Map<PostResponse>(post);
 
             return Created(location, response);
         }
@@ -109,19 +93,13 @@ namespace DemoREST.Controllers.V1
             {
                 var tagsToUpdate = request.Tags.Select(x => new Tag { TagName = x.TagName }).ToList();
                 await _postService.UpdateTagsForPostAsync(post.PostId, tagsToUpdate);
-                tags = await _postService.GetTagsForPostAsync(post.PostId);
+                post.Tags = await _postService.GetPostTagsForPostAsync(post.PostId);
             }
 
-            return Ok(new PostResponse
-            {
-                Id = post.PostId,
-                Name = post.Name,
-                Tags = tags.Select(x => new TagResponse { TagName = x.TagName }),
-            });
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] Guid postId)
         {
             var userOwnsPost = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());
