@@ -1,6 +1,9 @@
 ﻿using DemoREST.Authorization;
+using DemoREST.Filters;
 using DemoREST.Options;
 using DemoREST.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +23,15 @@ namespace DemoREST.Installers
             services.AddSingleton(jwtSettings);
 
             services.AddScoped<IIdentityService, IdentityService>();
+
+            services.AddMvc(option => {
+                option.EnableEndpointRouting = false;
+                option.Filters.Add<ValidationFilter>();
+            });
+
             
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Program>();
 
             var tokenValidationParameters = new TokenValidationParameters
             {
