@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DemoREST.Cache;
 using DemoREST.Contracts.V1;
 using DemoREST.Contracts.V1.Requests;
 using DemoREST.Contracts.V1.Responses;
@@ -24,6 +25,7 @@ namespace DemoREST.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
+        [Cached(600)]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
@@ -31,6 +33,7 @@ namespace DemoREST.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
+        [Cached(600)]
         public async Task<IActionResult> Get([FromRoute]Guid postId)
         {
             var post = await _postService.GetPostByIdAsync(postId);
