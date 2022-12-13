@@ -19,9 +19,18 @@ namespace DemoREST.Services
             return _dataContext.Posts.AsNoTracking().Include(p=>p.Tags).SingleOrDefaultAsync(post => post.PostId == postId);
         }
 
-        public Task<List<Post>> GetPostsAsync()
+        public Task<List<Post>> GetPostsAsync(Pagination pagination)
         {
-            return _dataContext.Posts.Include(p=>p.Tags).ToListAsync();
+            if(pagination is null)
+            {
+                return _dataContext.Posts.Include(p => p.Tags).ToListAsync();
+            }
+
+            var skip = (pagination.PageNumber - 1) * pagination.PageSize;
+            return _dataContext.Posts.Include(x => x.Tags)
+                .Skip(skip)
+                .Take(pagination.PageSize)
+                .ToListAsync();
         }
 
         public async Task<bool> CreatePostAsync(Post post)

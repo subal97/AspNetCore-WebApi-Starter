@@ -66,6 +66,13 @@ namespace DemoREST.Installers
             });
 
             services.AddSingleton<IAuthorizationHandler, HasOrganizationEmailHandler>();
+
+            services.AddSingleton<IUriService>(serviceProvider => {
+                var accessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
+                return new UriService(absoluteUri);
+            });
         }
     }
 }

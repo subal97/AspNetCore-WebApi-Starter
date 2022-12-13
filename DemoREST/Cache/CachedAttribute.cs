@@ -20,6 +20,7 @@ namespace DemoREST.Cache
             var cacheSettings = context.HttpContext.RequestServices.GetRequiredService<RedisSettings>();
             if (!cacheSettings.Enabled)
             {
+                await next();
                 return;
             }
 

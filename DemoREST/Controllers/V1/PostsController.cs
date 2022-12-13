@@ -2,9 +2,11 @@
 using DemoREST.Cache;
 using DemoREST.Contracts.V1;
 using DemoREST.Contracts.V1.Requests;
+using DemoREST.Contracts.V1.Requests.Queries;
 using DemoREST.Contracts.V1.Responses;
 using DemoREST.Domain;
 using DemoREST.Extensions;
+using DemoREST.Helpers;
 using DemoREST.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,19 +19,31 @@ namespace DemoREST.Controllers.V1
     {
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
 
-        public PostsController(IPostService postService, IMapper mapper)
+        public PostsController(IPostService postService, IMapper mapper, IUriService uriService)
         {
             _postService = postService;
             _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         [Cached(600)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery]PaginationQuery paginationQuery )
         {
-            var posts = await _postService.GetPostsAsync();
-            return Ok(_mapper.Map<List<PostResponse>>(posts));
+            var pagination = _mapper.Map<Pagination>(paginationQuery);
+            var posts = await _postService.GetPostsAsync(pagination);
+            var postResponse = _mapper.Map<List<PostResponse>>(posts);
+
+            if(pagination is null || pagination.PageSize < 1 || pagination.PageNumber < 1)
+            {
+                return Ok(postResponse);
+            }
+
+            var paginatedResponse = PaginationHelpers.CreatePaginatedResponse(_uriService, pagination, postResponse);
+
+            return Ok(paginatedResponse);
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
@@ -63,12 +77,10 @@ namespace DemoREST.Controllers.V1
                 post.Tags = await _postService.GetPostTagsForPostAsync(post.PostId);
             }
 
-            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var location = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.PostId.ToString());
-
+            var locationUri = _uriService.GetPostUri(post.PostId.ToString());
             var response = _mapper.Map<PostResponse>(post);
 
-            return Created(location, response);
+            return Created(locationUri, response);
         }
 
         [HttpPut(ApiRoutes.Posts.Update)]
