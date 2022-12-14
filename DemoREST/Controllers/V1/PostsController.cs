@@ -1,8 +1,12 @@
-﻿using DemoREST.Contracts.V1;
+﻿using AutoMapper;
+using DemoREST.Cache;
+using DemoREST.Contracts.V1;
 using DemoREST.Contracts.V1.Requests;
+using DemoREST.Contracts.V1.Requests.Queries;
 using DemoREST.Contracts.V1.Responses;
 using DemoREST.Domain;
 using DemoREST.Extensions;
+using DemoREST.Helpers;
 using DemoREST.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,29 +18,38 @@ namespace DemoREST.Controllers.V1
     public class PostsController : Controller
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
 
-        public PostsController(IPostService postService)
+        public PostsController(IPostService postService, IMapper mapper, IUriService uriService)
         {
             _postService = postService;
+            _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
-        public async Task<IActionResult> GetAll()
+        [Cached(600)]
+        public async Task<IActionResult> GetAll([FromQuery]PostsQuery? postsQuery, [FromQuery]PaginationQuery paginationQuery)
         {
-            var posts = await _postService.GetPostsAsync();
+            var filter = _mapper.Map<PostsFilter>(postsQuery);
+            var pagination = _mapper.Map<Pagination>(paginationQuery);
+            
+            var posts = await _postService.GetPostsAsync(filter, pagination);
+            var postResponse = _mapper.Map<List<PostResponse>>(posts);
 
-            var response = from post in posts
-                           select new PostResponse
-                           {
-                               Id = post.PostId,
-                               Name = post.Name,
-                               Tags = post.Tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList(),
-                           };
+            if(pagination is null || pagination.PageSize < 1 || pagination.PageNumber < 1)
+            {
+                return Ok(postResponse);
+            }
 
-            return Ok(response);
+            var paginatedResponse = PaginationHelpers.CreatePaginatedResponse(_uriService, pagination, postResponse);
+
+            return Ok(paginatedResponse);
         }
 
         [HttpGet(ApiRoutes.Posts.Get)]
+        [Cached(600)]
         public async Task<IActionResult> Get([FromRoute]Guid postId)
         {
             var post = await _postService.GetPostByIdAsync(postId);
@@ -44,12 +57,7 @@ namespace DemoREST.Controllers.V1
             {
                 return NotFound();
             }
-            return Ok(new PostResponse 
-            { 
-                Id = post.PostId, 
-                Name = post.Name,
-                Tags = post.Tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList(),
-            });
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -68,20 +76,13 @@ namespace DemoREST.Controllers.V1
             {
                 tags = postRequest.Tags.Select(x => new Tag { TagName = x.TagName }).ToList();
                 await _postService.UpdateTagsForPostAsync(post.PostId, tags);
-                tags = await _postService.GetTagsForPostAsync(post.PostId);
+                post.Tags = await _postService.GetPostTagsForPostAsync(post.PostId);
             }
 
-            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var location = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.PostId.ToString());
+            var locationUri = _uriService.GetPostUri(post.PostId.ToString());
+            var response = _mapper.Map<PostResponse>(post);
 
-            var response = new PostResponse
-            {
-                Id = post.PostId,
-                Name = post.Name,
-                Tags = tags?.Select(x => new TagResponse { TagName = x.TagName }) ?? Array.Empty<TagResponse>().ToList()
-            };
-
-            return Created(location, response);
+            return Created(locationUri, response);
         }
 
         [HttpPut(ApiRoutes.Posts.Update)]
@@ -109,19 +110,13 @@ namespace DemoREST.Controllers.V1
             {
                 var tagsToUpdate = request.Tags.Select(x => new Tag { TagName = x.TagName }).ToList();
                 await _postService.UpdateTagsForPostAsync(post.PostId, tagsToUpdate);
-                tags = await _postService.GetTagsForPostAsync(post.PostId);
+                post.Tags = await _postService.GetPostTagsForPostAsync(post.PostId);
             }
 
-            return Ok(new PostResponse
-            {
-                Id = post.PostId,
-                Name = post.Name,
-                Tags = tags.Select(x => new TagResponse { TagName = x.TagName }),
-            });
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] Guid postId)
         {
             var userOwnsPost = await _postService.UserOwnsPostAsync(postId, HttpContext.GetUserId());

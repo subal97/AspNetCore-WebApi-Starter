@@ -1,4 +1,5 @@
-﻿using DemoREST.Contracts.V1;
+﻿using AutoMapper;
+using DemoREST.Contracts.V1;
 using DemoREST.Contracts.V1.Requests;
 using DemoREST.Contracts.V1.Responses;
 using DemoREST.Domain;
@@ -13,20 +14,19 @@ namespace DemoREST.Controllers.V1
     public class TagsController : Controller
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
 
-        public TagsController(IPostService postService)
+        public TagsController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Tag.GetAll)]
         public async Task<IActionResult> GetAll()
         {
             var tags = await _postService.GetAllTagsAsync();
-            return Ok(tags.Select(tag => new TagResponse
-            {
-                TagName = tag.TagName,
-            }));
+            return Ok(_mapper.Map<List<TagResponse>>(tags));
         }
 
         [HttpPost(ApiRoutes.Tag.Get)]
@@ -37,10 +37,7 @@ namespace DemoREST.Controllers.V1
             {
                 return NotFound();
             }
-            return Ok(new TagResponse
-            {
-                TagName = tag.TagName,
-            });
+            return Ok(_mapper.Map<TagResponse>(tag));
         }
 
         [HttpPost(ApiRoutes.Tag.Create)]
@@ -52,10 +49,7 @@ namespace DemoREST.Controllers.V1
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var location = baseUrl + "/" + ApiRoutes.Tag.Get.Replace("{tagName}", tag.TagName);
 
-            var response = new TagResponse
-            {
-                TagName = tag.TagName,
-            };
+            var response = _mapper.Map<TagResponse>(tag);
 
             return Created(location, response);
         }

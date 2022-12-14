@@ -1,6 +1,9 @@
 ﻿using DemoREST.Authorization;
+using DemoREST.Filters;
 using DemoREST.Options;
 using DemoREST.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +23,15 @@ namespace DemoREST.Installers
             services.AddSingleton(jwtSettings);
 
             services.AddScoped<IIdentityService, IdentityService>();
+
+            services.AddMvc(option => {
+                option.EnableEndpointRouting = false;
+                option.Filters.Add<ValidationFilter>();
+            });
+
             
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Program>();
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -57,32 +67,11 @@ namespace DemoREST.Installers
 
             services.AddSingleton<IAuthorizationHandler, HasOrganizationEmailHandler>();
 
-
-
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API service", Version = "v1" });
-
-                x.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Description = "JET Authorization header using the bearer scheme",
-                });
-
-                x.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference{Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
-                        },
-                        new string[]{ }
-                    }
-                });
+            services.AddSingleton<IUriService>(serviceProvider => {
+                var accessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
+                return new UriService(absoluteUri);
             });
         }
     }

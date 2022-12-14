@@ -1,4 +1,5 @@
 ﻿using DemoREST.Contracts.V1.Requests;
+using DemoREST.Contracts.V1.Requests.Queries;
 using DemoREST.Data;
 using DemoREST.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,23 @@ namespace DemoREST.Services
             return _dataContext.Posts.AsNoTracking().Include(p=>p.Tags).SingleOrDefaultAsync(post => post.PostId == postId);
         }
 
-        public Task<List<Post>> GetPostsAsync()
+        public Task<List<Post>> GetPostsAsync(PostsFilter filter, Pagination pagination)
         {
-            return _dataContext.Posts.Include(p=>p.Tags).ToListAsync();
+            var query = _dataContext.Posts.AsNoTracking().AsQueryable();
+
+            //should this logic be below pagination check logic?
+            query = AddFilterToQuery(filter, query);
+
+            if (pagination is null)
+            {
+                return query.Include(p => p.Tags).ToListAsync();
+            }
+
+            var skip = (pagination.PageNumber - 1) * pagination.PageSize;
+            return query.Include(x => x.Tags)
+                .Skip(skip)
+                .Take(pagination.PageSize)
+                .ToListAsync();
         }
 
         public async Task<bool> CreatePostAsync(Post post)
@@ -64,6 +79,11 @@ namespace DemoREST.Services
         public Task<List<Tag>> GetTagsForPostAsync(Guid postId)
         {
             return _dataContext.PostTag.AsNoTracking().Where(p => p.PostId == postId).Select(p => new Tag { TagName = p.TagName}).ToListAsync();
+        }
+
+        public Task<List<PostTag>> GetPostTagsForPostAsync(Guid postId)
+        {
+            return _dataContext.PostTag.Where(x => x.PostId == postId).ToListAsync();
         }
 
         public async Task<bool> CreateTagAsync(Tag tag)
@@ -122,6 +142,16 @@ namespace DemoREST.Services
         private bool PostExists(Guid id)
         {
             return _dataContext.Posts.Any(post => post.PostId == id);
+        }
+
+        private static IQueryable<Post> AddFilterToQuery(PostsFilter filter, IQueryable<Post> query)
+        {
+            if (!string.IsNullOrEmpty(filter?.UserId))
+            {
+                query = query.Where(p => p.UserId == filter.UserId);
+            }
+
+            return query;
         }
 
     }
