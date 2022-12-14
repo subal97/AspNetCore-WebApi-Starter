@@ -1,11 +1,12 @@
 ﻿using DemoREST.Contracts.V1.Requests;
+using DemoREST.Contracts.V1.Requests.Queries;
 using DemoREST.Domain;
 
 namespace DemoREST.Services
 {
     public interface IPostService
     {
-        Task<List<Post>> GetPostsAsync(Pagination pagination);
+        Task<List<Post>> GetPostsAsync(PostsFilter filter, Pagination pagination);
         Task<Post> GetPostByIdAsync(Guid postId);
         Task<bool> CreatePostAsync(Post post);
         Task<bool> UpdatePostAsync(Post postToUpdate);

@@ -9,6 +9,7 @@ namespace DemoREST.Mappings
         public RequestToDomainProfile()
         {
             CreateMap<PaginationQuery, Pagination>();
+            CreateMap<PostsQuery, PostsFilter>();
         }
     }
 }

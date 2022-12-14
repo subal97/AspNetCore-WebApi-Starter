@@ -1,4 +1,5 @@
 ﻿using DemoREST.Contracts.V1.Requests;
+using DemoREST.Contracts.V1.Requests.Queries;
 using DemoREST.Data;
 using DemoREST.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +20,20 @@ namespace DemoREST.Services
             return _dataContext.Posts.AsNoTracking().Include(p=>p.Tags).SingleOrDefaultAsync(post => post.PostId == postId);
         }
 
-        public Task<List<Post>> GetPostsAsync(Pagination pagination)
+        public Task<List<Post>> GetPostsAsync(PostsFilter filter, Pagination pagination)
         {
-            if(pagination is null)
+            var query = _dataContext.Posts.AsNoTracking().AsQueryable();
+
+            //should this logic be below pagination check logic?
+            query = AddFilterToQuery(filter, query);
+
+            if (pagination is null)
             {
-                return _dataContext.Posts.Include(p => p.Tags).ToListAsync();
+                return query.Include(p => p.Tags).ToListAsync();
             }
 
             var skip = (pagination.PageNumber - 1) * pagination.PageSize;
-            return _dataContext.Posts.Include(x => x.Tags)
+            return query.Include(x => x.Tags)
                 .Skip(skip)
                 .Take(pagination.PageSize)
                 .ToListAsync();
@@ -136,6 +142,16 @@ namespace DemoREST.Services
         private bool PostExists(Guid id)
         {
             return _dataContext.Posts.Any(post => post.PostId == id);
+        }
+
+        private static IQueryable<Post> AddFilterToQuery(PostsFilter filter, IQueryable<Post> query)
+        {
+            if (!string.IsNullOrEmpty(filter?.UserId))
+            {
+                query = query.Where(p => p.UserId == filter.UserId);
+            }
+
+            return query;
         }
 
     }

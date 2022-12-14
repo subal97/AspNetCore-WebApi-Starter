@@ -30,10 +30,12 @@ namespace DemoREST.Controllers.V1
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         [Cached(600)]
-        public async Task<IActionResult> GetAll([FromQuery]PaginationQuery paginationQuery )
+        public async Task<IActionResult> GetAll([FromQuery]PostsQuery? postsQuery, [FromQuery]PaginationQuery paginationQuery)
         {
+            var filter = _mapper.Map<PostsFilter>(postsQuery);
             var pagination = _mapper.Map<Pagination>(paginationQuery);
-            var posts = await _postService.GetPostsAsync(pagination);
+            
+            var posts = await _postService.GetPostsAsync(filter, pagination);
             var postResponse = _mapper.Map<List<PostResponse>>(posts);
 
             if(pagination is null || pagination.PageSize < 1 || pagination.PageNumber < 1)

@@ -17,13 +17,6 @@ builder.Services.InstallServicesInAssembly(builder.Configuration);
 
 var app = builder.Build();
 
-//Migration on startup
-using (var scope = app.Services.CreateScope())
-{
-    await Seed.RunMigration(scope);
-    await Seed.AddRoles(scope);
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -31,7 +24,12 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    //app.UseHsts();
+    //Migration on startup. It's a bad practice as every instance of API will try to run this migration.
+    using (var scope = app.Services.CreateScope())
+    {
+        await Seed.RunMigration(scope);
+        await Seed.AddRoles(scope);
+    }
 }
 
 //app.UseHttpsRedirection();
