@@ -1,5 +1,6 @@
-﻿using DemoREST.Cache;
+﻿using DemoREST.Options;
 using DemoREST.Services;
+using StackExchange.Redis;
 
 namespace DemoREST.Installers
 {
@@ -16,6 +17,7 @@ namespace DemoREST.Installers
                 return;
             }
 
+            services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisSettings.ConnectionString));
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = redisSettings.ConnectionString;

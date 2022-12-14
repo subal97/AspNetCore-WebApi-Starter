@@ -1,9 +1,13 @@
+using DemoREST.Contracts;
 using DemoREST.Data;
 using DemoREST.InitialConfiguration;
 using DemoREST.Installers;
 using DemoREST.Options;
+using Microsoft.AspNetCore.DataProtection.Repositories;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -31,6 +35,26 @@ else
 }
 
 //app.UseHttpsRedirection();
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) => 
+    { 
+        context.Response.ContentType= "application/json";
+        var response = new HealthCheckResponse
+        {
+            OverallStatus = report.Status.ToString(),
+            Checks = report.Entries.Select(e => new HealthCheck
+            {
+                Component = e.Key,
+                Status = e.Value.Status.ToString(),
+                Description = e.Value.Description
+            }),
+            Duration = report.TotalDuration
+        };
+        await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+    }
+});
+
 app.UseStaticFiles();
 
 app.UseAuthentication();

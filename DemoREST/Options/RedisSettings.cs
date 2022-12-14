@@ -1,4 +1,4 @@
-﻿namespace DemoREST.Cache
+﻿namespace DemoREST.Options
 {
     public class RedisSettings
     {
