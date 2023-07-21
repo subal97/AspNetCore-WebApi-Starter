@@ -17,7 +17,7 @@ namespace DemoREST.Installers
                     BearerFormat = "JWT",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Description = "JET Authorization header using the bearer scheme",
+                    Description = "JWT Authorization header using the bearer scheme",
                 });
 
                 x.AddSecurityRequirement(new OpenApiSecurityRequirement

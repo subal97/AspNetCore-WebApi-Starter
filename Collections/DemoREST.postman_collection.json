@@ -1,0 +1,332 @@
+{
+	"info": {
+		"_postman_id": "c825b5ae-9678-4d06-94be-5ac08e4bcc24",
+		"name": "DemoREST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"subal@gmail.com\",\r\n  \"password\": \"Subal@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"user@gmail.com\",\r\n  \"password\": \"Subal@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdWJhbEBnbWFpbC5jb20iLCJqdGkiOiI3MjBiMTg1NC1lYWFmLTRmZjAtYTMzOS0wMzk1OTg3NmNjNjkiLCJlbWFpbCI6InN1YmFsQGdtYWlsLmNvbSIsImlkIjoiMzMzNmQ3ZDItZGU2ZS00YmUzLTlmNDktM2MxYzY4YjYyMDZjIiwibmJmIjoxNjcwNDI2MzA3LCJleHAiOjE2NzA0MjYzNTIsImlhdCI6MTY3MDQyNjMwN30.9Z2TYKIEepa5xoxn7GYNXgjBz-ju-JcIzcJR5Gjstb8\",\r\n    \"refreshToken\": \"247d7300-c88c-43dd-9da9-bac785ac0263\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/refresh",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Post (postId)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/1993be38-71f9-4da7-99b6-64300c027298",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"1993be38-71f9-4da7-99b6-64300c027298"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Post",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"subal p1 mod2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/1993be38-71f9-4da7-99b6-64300c027298",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"1993be38-71f9-4da7-99b6-64300c027298"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Media",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/media",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Media",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/media",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"media"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdWJhbEBnbWFpbC5jb20iLCJqdGkiOiJiZWQwOGQ4OC00MDk3LTRiYWItYjgwMi0xNTZlMWJmNzM0MjEiLCJlbWFpbCI6InN1YmFsQGdtYWlsLmNvbSIsImlkIjoiMzMzNmQ3ZDItZGU2ZS00YmUzLTlmNDktM2MxYzY4YjYyMDZjIiwibmJmIjoxNjcwNjc3MzI1LCJleHAiOjE2NzA2Nzg1MjUsImlhdCI6MTY3MDY3NzMyNX0.uKSFT7f5sUkWFtu7c5RR6QPfECMu6jFAvM319ZGQayE",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

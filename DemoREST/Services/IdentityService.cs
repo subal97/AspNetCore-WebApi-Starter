@@ -202,7 +202,7 @@ namespace DemoREST.Services
             {
                 claims.Add(new Claim("role", userRoles.First()));
             }
-            
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -211,21 +211,13 @@ namespace DemoREST.Services
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
+            RefreshToken refreshToken = CreateRefreshToken(user, token);
 
-            var refreshToken = new RefreshToken
-            {
-                Token = Guid.NewGuid().ToString(),
-                JwtId = token.Id,
-                UserId = user.Id,
-                CreationDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(6)
-            };
-            
             try
             {
                 //purge old refresh tokens, just keep the latest one
-                var existingRefreshTokenCount = await _dataContext.RefreshTokens.CountAsync(x => x.UserId == user.Id);            
-                if(existingRefreshTokenCount >= 3)
+                var existingRefreshTokenCount = await _dataContext.RefreshTokens.CountAsync(x => x.UserId == user.Id);
+                if (existingRefreshTokenCount >= 3)
                 {
                     var oldTokens = await _dataContext.RefreshTokens.Where(x => x.UserId == user.Id)
                                             .OrderBy(x => x.CreationDate)
@@ -240,7 +232,7 @@ namespace DemoREST.Services
                 return new AuthenticationResult
                 {
                     Success = false,
-                    Errors = new [] {"Could not create Refresh Token"},
+                    Errors = new[] { "Could not create Refresh Token" },
                 };
             }
 
@@ -250,6 +242,18 @@ namespace DemoREST.Services
                 Token = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken.Token,
             };
-        }        
+        }
+
+        private static RefreshToken CreateRefreshToken(IdentityUser user, SecurityToken token)
+        {
+            return new RefreshToken
+            {
+                Token = Guid.NewGuid().ToString(),
+                JwtId = token.Id,
+                UserId = user.Id,
+                CreationDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(6)
+            };
+        }
     }
 }

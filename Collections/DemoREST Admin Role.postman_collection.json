@@ -1,0 +1,377 @@
+{
+	"info": {
+		"_postman_id": "b4294c94-a3f1-488b-9174-07562a6030cd",
+		"name": "DemoREST Admin Role",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@subal.com\",\r\n  \"password\": \"Subal@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"subal@subal.com\",\r\n  \"password\": \"Subal@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdWJhbEBnbWFpbC5jb20iLCJqdGkiOiI3MjBiMTg1NC1lYWFmLTRmZjAtYTMzOS0wMzk1OTg3NmNjNjkiLCJlbWFpbCI6InN1YmFsQGdtYWlsLmNvbSIsImlkIjoiMzMzNmQ3ZDItZGU2ZS00YmUzLTlmNDktM2MxYzY4YjYyMDZjIiwibmJmIjoxNjcwNDI2MzA3LCJleHAiOjE2NzA0MjYzNTIsImlhdCI6MTY3MDQyNjMwN30.9Z2TYKIEepa5xoxn7GYNXgjBz-ju-JcIzcJR5Gjstb8\",\r\n    \"refreshToken\": \"247d7300-c88c-43dd-9da9-bac785ac0263\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/refresh",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Post by postId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/b9af8717-ca07-45e5-8c22-7b3356d3b3f7",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"b9af8717-ca07-45e5-8c22-7b3356d3b3f7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Admins post 2\",\r\n  \"tags\": [\r\n    {\r\n        \"tagName\": \"redis\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Post",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Subal post 3\",\r\n  \"tags\": [\r\n    {\r\n      \"tagName\": \"redis\"\r\n    },\r\n    {\r\n      \"tagName\": \"aspnetcore\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/b9af8717-ca07-45e5-8c22-7b3356d3b3f7",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"b9af8717-ca07-45e5-8c22-7b3356d3b3f7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/6e7556c5-cc72-44db-92f4-c41b8a564eb9",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"6e7556c5-cc72-44db-92f4-c41b8a564eb9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tags by tagName",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags/python",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags",
+						"python"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Tag",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"tagName\": \"Java EE\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Tag",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags/6e7556c5-cc72-44db-92f4-c41b8a564eb9",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags",
+						"6e7556c5-cc72-44db-92f4-c41b8a564eb9"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBzdWJhbC5jb20iLCJqdGkiOiI4MjUyNTYwYS1hYzJmLTRkNjAtYmUzNC01N2RkODBkOTg5OTIiLCJlbWFpbCI6ImFkbWluQHN1YmFsLmNvbSIsImlkIjoiODk4MTE3NTItM2Q4Ny00ZWI3LTkyY2QtNGQyMjJiODU4ODQyIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNjcwODU4NzY5LCJleHAiOjE2NzA4NjExNjksImlhdCI6MTY3MDg1ODc2OX0.dPRmn6yQKkkU4DAJN9IV8UE6AbkndyMAPoR83-BHPGw",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

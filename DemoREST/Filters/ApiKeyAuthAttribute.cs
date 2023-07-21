@@ -22,7 +22,6 @@ namespace DemoREST.Filters
                 return;
             }
 
-
             await next();
         }
     }

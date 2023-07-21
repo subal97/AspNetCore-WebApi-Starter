@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "110f321b-4723-4183-bc73-494bc8c4c429",
+		"name": "DemoREST User Role",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"subal@subal.com\",\r\n  \"password\": \"Subal@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"subal@subal.com\",\r\n  \"password\": \"Subal@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdWJhbEBnbWFpbC5jb20iLCJqdGkiOiI3MjBiMTg1NC1lYWFmLTRmZjAtYTMzOS0wMzk1OTg3NmNjNjkiLCJlbWFpbCI6InN1YmFsQGdtYWlsLmNvbSIsImlkIjoiMzMzNmQ3ZDItZGU2ZS00YmUzLTlmNDktM2MxYzY4YjYyMDZjIiwibmJmIjoxNjcwNDI2MzA3LCJleHAiOjE2NzA0MjYzNTIsImlhdCI6MTY3MDQyNjMwN30.9Z2TYKIEepa5xoxn7GYNXgjBz-ju-JcIzcJR5Gjstb8\",\r\n    \"refreshToken\": \"247d7300-c88c-43dd-9da9-bac785ac0263\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/indentity/refresh",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"indentity",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					],
+					"query": [
+						{
+							"key": "userid",
+							"value": "6289f0b3-acb7-4966-9037-0d780ea9457c",
+							"disabled": true
+						},
+						{
+							"key": "userid",
+							"value": "89811752-3d87-4eb7-92cd-4d222b858842",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Post by postId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/b9af8717-ca07-45e5-8c22-7b3356d3b3f7",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"b9af8717-ca07-45e5-8c22-7b3356d3b3f7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Admins post 1\",\r\n  \"tags\": [\r\n    {\r\n        \"tagName\": \"redis\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Post",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Subal post 2\",\r\n  \"tags\": [\r\n    {\r\n      \"tagName\": \"python\"\r\n    },\r\n    {\r\n      \"tagName\": \"aspnetcore\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/b9af8717-ca07-45e5-8c22-7b3356d3b3f7",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"b9af8717-ca07-45e5-8c22-7b3356d3b3f7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/posts/8b2b5041-caab-4eb6-b703-2777aa27bb02",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"posts",
+						"8b2b5041-caab-4eb6-b703-2777aa27bb02"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tags by tagName",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags/python",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags",
+						"python"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Tag",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"tagName\": \"oracle\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Tag",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/api/v1/tags/redis",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"api",
+						"v1",
+						"tags",
+						"redis"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Secrets",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "SecretApiAccessKey",
+						"value": "MyVeryVerySecretKey",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7226/secret",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"secret"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7226/health",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7226",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdWJhbEBzdWJhbC5jb20iLCJqdGkiOiI1NGExMmJhMi0xNTgwLTQ1MmQtYWUxYS01ZmNkMWU3ZWI4NmYiLCJlbWFpbCI6InN1YmFsQHN1YmFsLmNvbSIsImlkIjoiNjI4OWYwYjMtYWNiNy00OTY2LTkwMzctMGQ3ODBlYTk0NTdjIiwibmJmIjoxNjcxMDA2MDg4LCJleHAiOjE2NzEwMDg0ODgsImlhdCI6MTY3MTAwNjA4OH0.ljxrRd7YBdyCgRnhI9YGJgZdOkWA-3rNCAO_-euhbgM",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

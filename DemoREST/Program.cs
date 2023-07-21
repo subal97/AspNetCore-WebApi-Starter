@@ -5,8 +5,6 @@ using DemoREST.Installers;
 using DemoREST.Options;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +43,7 @@ app.UseHealthChecks("/health", new HealthCheckOptions
             {
                 Component = e.Key,
                 Status = e.Value.Status.ToString(),
-                Description = e.Value.Description
+                Description = e.Value.Description ?? "No description",
             }),
             Duration = report.TotalDuration
         };
@@ -54,6 +52,7 @@ app.UseHealthChecks("/health", new HealthCheckOptions
 });
 
 app.UseStaticFiles();
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();

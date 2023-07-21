@@ -13,7 +13,7 @@ namespace DemoREST.Services
             _baseUri = baseUri;
         }
 
-        public Uri GetAllPostUri(PaginationQuery pagination = null)
+        public Uri GetAllPostUri(PaginationQuery pagination = null!)
         {
             if (pagination is null)
             {

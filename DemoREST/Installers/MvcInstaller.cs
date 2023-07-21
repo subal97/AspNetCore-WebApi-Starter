@@ -15,7 +15,6 @@ namespace DemoREST.Installers
 {
     public class MvcInstaller : IInstaller
     {
-
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = new JwtSettings();
@@ -29,7 +28,6 @@ namespace DemoREST.Installers
                 option.Filters.Add<ValidationFilter>();
             });
 
-            
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<Program>();
 
